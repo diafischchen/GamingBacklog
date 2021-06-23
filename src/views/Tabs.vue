@@ -3,19 +3,19 @@
     <ion-tabs>
       <ion-router-outlet></ion-router-outlet>
       <ion-tab-bar slot="bottom">
-        <ion-tab-button tab="tab1" href="/tabs/tab1">
-          <ion-icon :icon="triangle" />
-          <ion-label>Tab 1</ion-label>
+        <ion-tab-button tab="systems" href="/tabs/systems">
+          <ion-icon :icon="home" />
+          <ion-label>Systems</ion-label>
         </ion-tab-button>
           
-        <ion-tab-button tab="tab2" href="/tabs/tab2">
-          <ion-icon :icon="ellipse" />
-          <ion-label>Tab 2</ion-label>
+        <ion-tab-button tab="games" href="/tabs/games">
+          <ion-icon :icon="gameController" />
+          <ion-label>Games</ion-label>
         </ion-tab-button>
         
-        <ion-tab-button tab="tab3" href="/tabs/tab3">
-          <ion-icon :icon="square" />
-          <ion-label>Tab 3</ion-label>
+        <ion-tab-button tab="completed" href="/tabs/completed">
+          <ion-icon :icon="checkmarkCircle" />
+          <ion-label>Completed</ion-label>
         </ion-tab-button>
       </ion-tab-bar>
     </ion-tabs>
@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { IonTabBar, IonTabButton, IonTabs, IonLabel, IonIcon, IonPage, IonRouterOutlet } from '@ionic/vue';
-import { ellipse, square, triangle } from 'ionicons/icons';
+import { ellipse, square, triangle, gameController, home, checkmarkCircle } from 'ionicons/icons';
 
 export default {
   name: 'Tabs',
@@ -34,6 +34,9 @@ export default {
       ellipse, 
       square, 
       triangle,
+      gameController,
+      home,
+      checkmarkCircle,
     }
   }
 }
