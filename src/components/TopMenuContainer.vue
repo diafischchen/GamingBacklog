@@ -7,9 +7,10 @@
 </template>
 
 <script lang="ts">
-import { IonButton, IonButtons, IonIcon, actionSheetController } from '@ionic/vue';
+import { IonButton, IonButtons, IonIcon, actionSheetController, modalController } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { addCircle } from 'ionicons/icons';
+import AddGame from '@/views/modal/AddGame.vue';
 
 export default defineComponent({
     name: 'TopMenuContainer',
@@ -19,31 +20,37 @@ export default defineComponent({
         IonIcon
     },
     methods: {
-        async presentActionSheet() {
-            const actionSheet = await actionSheetController
+        async openAddGameModal() {
+            const modal = await modalController
                 .create({
-                    buttons: [
-                        {
-                            text: 'Add System',
-                            handler: () => {
-                                console.log('clicked add system');
-                            }
-                        },
-                        {
-                            text: 'Add Game',
-                            handler: () => {
-                                console.log('clicked add game');
-                            }
-                        },
-                        {
-                            text: 'Cancel',
-                            role: 'cancel',
-                            handler: () => {
-                                console.log('clicked cancle')
-                            }
-                        }
-                    ]
+                    component: AddGame
                 });
+            return modal.present();
+        },
+        async presentActionSheet() {
+            const actionSheet = await actionSheetController.create({
+                buttons: [
+                    {
+                        text: 'Add System',
+                        handler: () => {
+                            console.log('clicked add system');
+                        }
+                    },
+                    {
+                        text: 'Add Game',
+                        handler: () => {
+                            this.openAddGameModal();
+                        }
+                    },
+                    {
+                        text: 'Cancel',
+                        role: 'cancel',
+                        handler: () => {
+                            console.log('clicked cancle')
+                        }
+                    }
+                ]
+            });
             await actionSheet.present();
 
             const { role } = await actionSheet.onDidDismiss();
