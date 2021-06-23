@@ -1,6 +1,6 @@
 {
-	"appId": "io.ionic.starter",
-	"appName": "testApp",
+	"appId": "net.diafischchen.backlog",
+	"appName": "GamingBacklog",
 	"webDir": "dist",
 	"bundledWebRuntime": false
 }
