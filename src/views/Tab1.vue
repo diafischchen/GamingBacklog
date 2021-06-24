@@ -7,7 +7,9 @@
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
-      <ExploreContainer name="Systems page" />
+
+      <ExploreContainer name="Systems" />
+      
     </ion-content>
   </ion-page>
 </template>

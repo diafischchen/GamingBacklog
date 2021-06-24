@@ -11,6 +11,7 @@ import { IonButton, IonButtons, IonIcon, actionSheetController, modalController 
 import { defineComponent } from 'vue';
 import { addCircle } from 'ionicons/icons';
 import AddGame from '@/views/modal/AddGame.vue';
+import AddSystem from '@/views/modal/AddSystem.vue';
 
 export default defineComponent({
     name: 'TopMenuContainer',
@@ -27,13 +28,20 @@ export default defineComponent({
                 });
             return modal.present();
         },
+        async openAddSystemModal() {
+            const modal = await modalController
+                .create({
+                    component: AddSystem
+                });
+            return modal.present();
+        },
         async presentActionSheet() {
             const actionSheet = await actionSheetController.create({
                 buttons: [
                     {
                         text: 'Add System',
                         handler: () => {
-                            console.log('clicked add system');
+                            this.openAddSystemModal();
                         }
                     },
                     {

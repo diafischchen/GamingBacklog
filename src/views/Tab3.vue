@@ -8,7 +8,7 @@
     </ion-header>
     <ion-content :fullscreen="true">
       
-      <ExploreContainer name="Completed page" />
+      <ExploreContainer name="Completed" />
     </ion-content>
   </ion-page>
 </template>
