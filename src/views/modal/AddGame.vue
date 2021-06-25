@@ -9,12 +9,21 @@
         <div class="form-input">
             <ion-item>
                 <ion-label position="floating">Game Name</ion-label>
-                <ion-input></ion-input>
+                <ion-input :value="name"></ion-input>
             </ion-item>
         </div>
         <div class="form-input">
             <div class="image-preview"></div>
             <ion-button expand="block">Choose Image</ion-button>
+        </div>
+        <div class="form-input">
+            <ion-item>
+                <ion-label position="floating">Game Desc</ion-label>
+                <ion-textarea :value="desc"></ion-textarea>
+            </ion-item>
+        </div>
+        <div class="form-input">
+            <ion-button expand="block" :disabled="formDisabled">Save Game</ion-button>
         </div>
     </ion-content>
 </template>
@@ -36,6 +45,23 @@ export default defineComponent({
         IonItem,
         CloseModalButton
     },
+    data() {
+        return {
+            form: {
+                name: null,
+                desc: null,
+            }
+        }
+    },
+    computed: {
+        formDisabled() {
+            if (this.form.name !== null && this.form.desc !== null) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
 });
 </script>
 
