@@ -9,7 +9,7 @@
         <div class="form-input">
             <ion-item>
                 <ion-label position="floating">Game Name</ion-label>
-                <ion-input :value="name"></ion-input>
+                <ion-input v-model="form.name"></ion-input>
             </ion-item>
         </div>
         <div class="form-input">
@@ -19,7 +19,7 @@
         <div class="form-input">
             <ion-item>
                 <ion-label position="floating">Game Desc</ion-label>
-                <ion-textarea :value="desc"></ion-textarea>
+                <ion-textarea @input="form.desc=$event.target.value"></ion-textarea>
             </ion-item>
         </div>
         <div class="form-input">
@@ -48,14 +48,14 @@ export default defineComponent({
     data() {
         return {
             form: {
-                name: null,
-                desc: null,
+                name: '',
+                desc: '',
             }
         }
     },
     computed: {
         formDisabled() {
-            if (this.form.name !== null && this.form.desc !== null) {
+            if (this.form.name != '' && this.form.desc != '') {
                 return false;
             } else {
                 return true;
