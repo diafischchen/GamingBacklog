@@ -9,23 +9,53 @@
         <div class="form-input">
             <ion-item>
                 <ion-label position="floating">System Name</ion-label>
-                <ion-input></ion-input>
+                <ion-input v-model="form.name"></ion-input>
             </ion-item>
         </div>
         <div class="form-input">
-            <div class="image-preview"></div>
-            <ion-button expand="block">Choose Image</ion-button>
+            <ion-item>
+                <ion-thumbnail slot="start">
+                    <img :src="previewImageUrl" />
+                </ion-thumbnail>
+                <ion-button fill="clear" @click="importPicture">
+                    <ion-icon slot="start" :icon="images"></ion-icon>Choose Picture
+                </ion-button>
+            </ion-item>
+            {{ previewImageUrl }}
+        </div>
+        <div class="form-input">
+            <ion-item>
+                <ion-label position="floating">System Desc</ion-label>
+                <ion-textarea @input="form.desc=$event.target.value"></ion-textarea>
+            </ion-item>
+        </div>
+        <div class="form-input">
+            <ion-button @click="save" expand="block" :disabled="formDisabled">Save System</ion-button>
         </div>
     </ion-content>
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput } from '@ionic/vue';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonThumbnail, IonIcon } from '@ionic/vue';
 import { defineComponent } from 'vue';
+import { images } from 'ionicons/icons';
 import CloseModalButton from '@/components/CloseModalButton.vue';
 
+import { Camera, CameraResultType } from '@capacitor/camera';
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Storage } from '@capacitor/storage';
+
+const convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = reject;
+    reader.onload = () => {
+        resolve(reader.result);
+    };
+    reader.readAsDataURL(blob);
+});
+
 export default defineComponent({
-    name: 'AddSystemModel',
+    name: 'AddSystemModal',
     components: {
         IonContent,
         IonHeader,
@@ -34,8 +64,101 @@ export default defineComponent({
         IonInput,
         IonLabel,
         IonItem,
+        IonThumbnail,
+        IonIcon,
         CloseModalButton
     },
+    methods: {
+        async importPicture() {
+            const photo = await Camera.getPhoto({
+                resultType: CameraResultType.Uri,
+                quality: 60
+            });
+
+            if (photo.webPath) {
+                this.previewImageUrl = photo.webPath;
+            }
+        },
+
+        async savePicture(photoWebPath: string, fileName: string) {
+            const response = await fetch(photoWebPath);
+            const blob = await response.blob();
+
+            const base64Data = await convertBlobToBase64(blob) as string;
+
+            await Filesystem.writeFile({
+                path: fileName,
+                data: base64Data,
+                directory: Directory.Data
+            });
+
+            return {
+                filepath: fileName,
+                webPath: photoWebPath
+            }
+        },
+
+        async save() {
+            // get all entries
+            const entries = await Storage.get({ key: 'systems' })
+
+            if (!entries.value) {
+                entries.value = 'null';
+            }
+
+            const preEntries = JSON.parse(entries.value);
+
+            // save image and get file name
+            let fileName = '';
+            if (this.previewImageUrl != '') {
+                fileName = new Date().getTime() + '.png';
+                await this.savePicture(this.previewImageUrl, fileName);
+            }
+
+
+            // generate new entry
+            const newEntry = {
+                id: new Date().getTime(),
+                name: this.form.name,
+                desc: this.form.desc,
+                image: fileName
+            }
+
+            // alle entries wieder zusammensetzen mit dem neuen
+            let saveEntries
+
+            if (preEntries) {
+                saveEntries = [newEntry, ...preEntries];
+            } else {
+                saveEntries = [newEntry];
+            }
+
+            // save
+            await Storage.set({
+                key: 'systems',
+                value: JSON.stringify(saveEntries)
+            });
+        }
+    },
+    data() {
+        return {
+            form: {
+                name: '',
+                desc: '',
+            },
+            images,
+            previewImageUrl: ''
+        }
+    },
+    computed: {
+        formDisabled() {
+            if (this.form.name != '') {
+                return false;
+            } else {
+                return true;
+            }
+        }
+    }
 });
 </script>
 
