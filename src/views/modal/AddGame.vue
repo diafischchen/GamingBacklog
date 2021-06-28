@@ -21,7 +21,6 @@
                     <ion-icon slot="start" :icon="images"></ion-icon>Choose Picture
                 </ion-button>
             </ion-item>
-            {{ previewImageUrl }}
         </div>
         <div class="form-input">
             <ion-item>
@@ -122,7 +121,7 @@ export default defineComponent({
             // save image and get file name
             let fileName = '';
             if (this.previewImageUrl != '') {
-                fileName = new Date().getTime() + '.png';
+                fileName = new Date().getTime() + '.jpeg';
                 await this.savePicture(this.previewImageUrl, fileName);
             }
 
@@ -161,7 +160,7 @@ export default defineComponent({
                 system: '',
             },
             images,
-            previewImageUrl: '',
+            previewImageUrl: '/assets/fallback_image.png',
             systems: [],
         }
     },
