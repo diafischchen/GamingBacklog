@@ -8,7 +8,7 @@
     </ion-header>
     <ion-content :fullscreen="true">
 
-      <ExploreContainer name="Systems" />
+      <SystemsContainer />
       
     </ion-content>
   </ion-page>
@@ -16,11 +16,11 @@
 
 <script lang="ts">
 import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/vue';
-import ExploreContainer from '@/components/ExploreContainer.vue';
+import SystemsContainer from '@/components/SystemsContainer.vue';
 import TopMenuContainer from '@/components/TopMenuContainer.vue';
 
 export default  {
   name: 'Tab1',
-  components: { ExploreContainer, TopMenuContainer, IonHeader, IonToolbar, IonTitle, IonContent, IonPage },
+  components: { SystemsContainer, TopMenuContainer, IonHeader, IonToolbar, IonTitle, IonContent, IonPage },
 }
 </script>
