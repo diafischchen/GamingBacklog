@@ -26,20 +26,16 @@ export default defineComponent({
         IonLabel,
         IonThumbnail
     },
-    /*methods: {
-        getImage(imageName: string) {
-            const readImage = async () => {
-                const file = await Filesystem.readFile({
-                    path: imageName,
-                    directory: Directory.Data
-                });
-                return file;
-            }
-
-            const file = readImage();
+    methods: {
+        // das muss in mounted
+        async getImage(imageName: string) {
+            const file = await Filesystem.readFile({
+                path: imageName,
+                directory: Directory.Data
+            });
             return `data:image/jpeg;base64,${file.data}`;
         }
-    },*/
+    },
     data() {
         return {
             systems: [
