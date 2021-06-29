@@ -1,5 +1,5 @@
 <template>
-    <ion-list v-for="system in systems" :key="system.id">
+    <ion-list v-for="system in systems" :key="system.id" class="ion-padding">
         <ion-item>
             <ion-thumbnail slot="start">
                 <img :src="system.image" />
@@ -75,6 +75,14 @@ export default defineComponent({
         }
 
         this.systems = JSON.parse(entries.value);
+
+        for (const system of this.systems) {
+            const file = await Filesystem.readFile({
+                path: system.image,
+                directory: Directory.Data
+            });
+            system.image = `data:image/jpeg;base64,${file.data}`;
+        }
     }
 })
 </script>
