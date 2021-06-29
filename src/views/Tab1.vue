@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar>
         <ion-title>Systems</ion-title>
-        <TopMenuContainer v-on:updatesystems="update" />
+        <TopMenuContainer v-on:update-systems="update()" />
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
