@@ -13,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import { IonList, IonItem, IonLabel, IonThumbnail, IonImg } from '@ionic/vue';
+import { IonList, IonItem, IonLabel, IonThumbnail, IonImg, isPlatform } from '@ionic/vue';
 import { defineComponent } from 'vue'
 
 import { Storage } from '@capacitor/storage';
@@ -27,16 +27,6 @@ export default defineComponent({
         IonLabel,
         IonThumbnail,
         IonImg
-    },
-    methods: {
-        // das muss in mounted
-        async getImage(imageName: string) {
-            const file = await Filesystem.readFile({
-                path: imageName,
-                directory: Directory.Data
-            });
-            return `data:image/jpeg;base64,${file.data}`;
-        }
     },
     data() {
         return {
@@ -61,12 +51,28 @@ export default defineComponent({
 
         this.systems = JSON.parse(entries.value);
 
-        for (const system of this.systems) {
-            const file = await Filesystem.readFile({
-                path: system.image,
-                directory: Directory.Data
-            });
-            system.image = `data:image/jpeg;base64,${file.data}`;
+        if (!isPlatform('hybrid')) {
+
+            for (const system of this.systems) {
+                if (system.image != '') {
+                    const file = await Filesystem.readFile({
+                        path: system.image,
+                        directory: Directory.Data
+                    });
+                    system.image = `data:image/jpeg;base64,${file.data}`;
+                } else {
+                    system.image = '/assets/fallback_image.png';
+                }
+            }
+
+        } else {
+
+            for (const system of this.systems) {
+                if (system.image == '') {
+                    system.image = '/assets/fallback_image.png';
+                }
+            }
+
         }
     }
 })
