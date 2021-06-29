@@ -93,14 +93,22 @@ export default defineComponent({
 
             if (isPlatform('hybrid')) {
 
+                if (!photo.path) {
+                    photo.path = '';
+                }
+
                 const file = await Filesystem.readFile({
-                    path: photo.path!
+                    path: photo.path
                 });
                 base64Data = file.data;
 
             } else {
 
-                const response = await fetch(photo.webPath!);
+                if (!photo.webPath) {
+                    photo.webPath = '';
+                }
+
+                const response = await fetch(photo.webPath);
                 const blob = await response.blob();
                 base64Data = await convertBlobToBase64(blob) as string;
 
@@ -115,7 +123,7 @@ export default defineComponent({
             if (isPlatform('hybrid')) {
 
                 return {
-                    filepath: savedFile.uri,
+                    filepath: Capacitor.convertFileSrc(savedFile.uri),
                     webPath: Capacitor.convertFileSrc(savedFile.uri)
                 }
 

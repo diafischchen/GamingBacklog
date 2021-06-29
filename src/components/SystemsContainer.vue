@@ -1,5 +1,5 @@
 <template>
-    <ion-list>
+    <ion-list v-if="this.systems != undefined">
         <ion-item v-for="system in systems" :key="system.id">
             <ion-thumbnail slot="start">
                 <ion-img :src="system.image" />
@@ -10,14 +10,17 @@
             </ion-label>
         </ion-item>
     </ion-list>
+    <ExploreContainer v-else name="Systems" />
 </template>
 
 <script lang="ts">
 import { IonList, IonItem, IonLabel, IonThumbnail, IonImg, isPlatform } from '@ionic/vue';
 import { defineComponent } from 'vue'
+import ExploreContainer from '@/components/ExploreContainer.vue';
 
 import { Storage } from '@capacitor/storage';
 import { Filesystem, Directory } from '@capacitor/filesystem';
+
 
 export default defineComponent({
     name: 'SystemsContainer',
@@ -26,19 +29,12 @@ export default defineComponent({
         IonItem,
         IonLabel,
         IonThumbnail,
-        IonImg
+        IonImg,
+        ExploreContainer
     },
     data() {
         return {
-            systems: [
-                // Der Aufbau eines Systems
-                {
-                    id: '1',
-                    name: 'Something went wrong',
-                    desc: 'Please try restart your app',
-                    image: '/assets/fallback_image.png'
-                }
-            ],
+            systems: Array({id: '', name: '', desc: '', image: ''}),
             dataDir: Directory.Data,
         }
     },
