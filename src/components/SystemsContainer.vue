@@ -32,44 +32,48 @@ export default defineComponent({
         IonImg,
         ExploreContainer
     },
+    methods: {
+        async update() {
+            const entries = await Storage.get({ key: 'systems' })
+
+            if (!entries.value) {
+                entries.value = 'null';
+            }
+
+            this.systems = JSON.parse(entries.value);
+
+            if (!isPlatform('hybrid')) {
+
+                for (const system of this.systems) {
+                    if (system.image != '') {
+                        const file = await Filesystem.readFile({
+                            path: system.image,
+                            directory: Directory.Data
+                        });
+                        system.image = `data:image/jpeg;base64,${file.data}`;
+                    } else {
+                        system.image = '/assets/fallback_image.png';
+                    }
+                }
+
+            } else {
+
+                for (const system of this.systems) {
+                    if (system.image == '') {
+                        system.image = '/assets/fallback_image.png';
+                    }
+                }
+
+            }
+        }
+    },
     data() {
         return {
             systems: Array({id: '', name: '', desc: '', image: ''}),
-            dataDir: Directory.Data,
         }
     },
     async mounted() {
-        const entries = await Storage.get({ key: 'systems' })
-
-        if (!entries.value) {
-            entries.value = 'null';
-        }
-
-        this.systems = JSON.parse(entries.value);
-
-        if (!isPlatform('hybrid')) {
-
-            for (const system of this.systems) {
-                if (system.image != '') {
-                    const file = await Filesystem.readFile({
-                        path: system.image,
-                        directory: Directory.Data
-                    });
-                    system.image = `data:image/jpeg;base64,${file.data}`;
-                } else {
-                    system.image = '/assets/fallback_image.png';
-                }
-            }
-
-        } else {
-
-            for (const system of this.systems) {
-                if (system.image == '') {
-                    system.image = '/assets/fallback_image.png';
-                }
-            }
-
-        }
+        await this.update();
     }
 })
 </script>

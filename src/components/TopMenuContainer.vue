@@ -33,7 +33,10 @@ export default defineComponent({
                 .create({
                     component: AddSystem
                 });
-            return modal.present();
+            await modal.present();
+
+            await modal.onDidDismiss();
+            return this.$emit('update-systems');
         },
         async presentActionSheet() {
             const actionSheet = await actionSheetController.create({

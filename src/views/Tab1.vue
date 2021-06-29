@@ -3,7 +3,7 @@
     <ion-header>
       <ion-toolbar>
         <ion-title>Systems</ion-title>
-        <TopMenuContainer />
+        <TopMenuContainer v-on:updatesystems="update" />
       </ion-toolbar>
     </ion-header>
     <ion-content :fullscreen="true">
@@ -22,5 +22,10 @@ import TopMenuContainer from '@/components/TopMenuContainer.vue';
 export default  {
   name: 'Tab1',
   components: { SystemsContainer, TopMenuContainer, IonHeader, IonToolbar, IonTitle, IonContent, IonPage },
+  methods: {
+    update() {
+      console.log('update');
+    }
+  }
 }
 </script>

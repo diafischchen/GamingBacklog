@@ -35,7 +35,7 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonThumbnail, IonIcon, isPlatform } from '@ionic/vue';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonThumbnail, IonIcon, isPlatform, modalController } from '@ionic/vue';
 import { defineComponent, ref } from 'vue';
 import { images } from 'ionicons/icons';
 import CloseModalButton from '@/components/CloseModalButton.vue';
@@ -75,7 +75,8 @@ export default defineComponent({
         async importPicture() {
             const photo = await Camera.getPhoto({
                 resultType: CameraResultType.Uri,
-                quality: 60
+                quality: 60,
+                correctOrientation: false
             });
 
             if (photo.webPath) {
@@ -141,6 +142,9 @@ export default defineComponent({
         //  Hier wird der Eintrag an sich abgespeichert
         //  Falls ein Bild vorhanden ist, wird dies über die zweite Mthode im Filesystem gespeichert
         async save() {
+            // deactivate modal
+            this.formDeactivated = true;
+
             // get all entries
             const entries = await Storage.get({ key: 'systems' })
 
@@ -181,6 +185,10 @@ export default defineComponent({
                 key: 'systems',
                 value: JSON.stringify(saveEntries)
             });
+
+            // this.$emit('updateSystems');
+            // daten auf dismiss senden und onDismiss 
+            await modalController.dismiss();
         }
     },
     data() {
@@ -193,14 +201,19 @@ export default defineComponent({
             images,
             previewImageUrl: '/assets/fallback_image.png',
             photo: ref<Photo>(),
+            formDeactivated: false
         }
 
     },
     computed: {
 
         formDisabled() {
-            if (this.form.name != '') {
-                return false;
+            if (!this.formDeactivated) {
+                if (this.form.name != '') {
+                    return false;
+                } else {
+                    return true;
+                }
             } else {
                 return true;
             }
