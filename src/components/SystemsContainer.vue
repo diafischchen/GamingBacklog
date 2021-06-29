@@ -1,18 +1,19 @@
 <template>
-    <ion-list v-for="system in systems" :key="system.id" class="ion-padding">
-        <ion-item>
+    <ion-list>
+        <ion-item v-for="system in systems" :key="system.id">
             <ion-thumbnail slot="start">
-                <img :src="system.image" />
+                <ion-img :src="system.image" />
             </ion-thumbnail>
             <ion-label>
-                {{ system.name }}
+                <h3>{{ system.name }}</h3>
+                <p>{{ system.desc }}</p>
             </ion-label>
         </ion-item>
     </ion-list>
 </template>
 
 <script lang="ts">
-import { IonList, IonItem, IonLabel, IonThumbnail } from '@ionic/vue';
+import { IonList, IonItem, IonLabel, IonThumbnail, IonImg } from '@ionic/vue';
 import { defineComponent } from 'vue'
 
 import { Storage } from '@capacitor/storage';
@@ -24,7 +25,8 @@ export default defineComponent({
         IonList,
         IonItem,
         IonLabel,
-        IonThumbnail
+        IonThumbnail,
+        IonImg
     },
     methods: {
         // das muss in mounted
@@ -39,28 +41,11 @@ export default defineComponent({
     data() {
         return {
             systems: [
+                // Der Aufbau eines Systems
                 {
                     id: '1',
-                    name: 'NES',
-                    desc: 'Nintendo Entertainment System',
-                    image: '/assets/fallback_image.png'
-                },
-                {
-                    id: '2',
-                    name: 'SNES',
-                    desc: 'Super Nintendo Entertainment System',
-                    image: '/assets/fallback_image.png'
-                },
-                {
-                    id: '3',
-                    name: 'N64',
-                    desc: 'Nintendo 64',
-                    image: '/assets/fallback_image.png'
-                },
-                {
-                    id: '556546',
-                    name: 'SGM',
-                    desc: 'Sus Gaming Machine',
+                    name: 'Something went wrong',
+                    desc: 'Please try restart your app',
                     image: '/assets/fallback_image.png'
                 }
             ],
