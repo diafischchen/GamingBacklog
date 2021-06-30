@@ -12,6 +12,7 @@ import { defineComponent } from 'vue';
 import { addCircle } from 'ionicons/icons';
 import AddGame from '@/views/modal/AddGame.vue';
 import AddSystem from '@/views/modal/AddSystem.vue';
+import EventBus from '@/EventBus';
 
 export default defineComponent({
     name: 'TopMenuContainer',
@@ -36,7 +37,7 @@ export default defineComponent({
             await modal.present();
 
             await modal.onDidDismiss();
-            return this.$emit('update-systems');
+            return await EventBus().emitter.emit("update-systems");
         },
         async presentActionSheet() {
             const actionSheet = await actionSheetController.create({

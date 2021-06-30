@@ -17,6 +17,7 @@
 import { IonList, IonItem, IonLabel, IonThumbnail, IonImg, isPlatform } from '@ionic/vue';
 import { defineComponent } from 'vue'
 import ExploreContainer from '@/components/ExploreContainer.vue';
+import EventBus from '@/EventBus';
 
 import { Storage } from '@capacitor/storage';
 import { Filesystem, Directory } from '@capacitor/filesystem';
@@ -74,6 +75,9 @@ export default defineComponent({
     },
     async mounted() {
         await this.update();
+        EventBus().emitter.on("update-systems", (payload: any) => {
+            this.update();
+        });
     }
 })
 </script>
