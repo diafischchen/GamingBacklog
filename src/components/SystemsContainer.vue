@@ -73,8 +73,8 @@ export default defineComponent({
             systems: Array({id: '', name: '', desc: '', image: ''}),
         }
     },
-    async mounted() {
-        await this.update();
+    mounted() {
+        this.update();
         EventBus().emitter.on("update-systems", (payload: any) => {
             this.update();
         });

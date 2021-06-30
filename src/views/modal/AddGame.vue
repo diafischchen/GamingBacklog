@@ -36,6 +36,7 @@
                     <ion-select-option v-for="system in systems" :key="system.id" :value="system.id">{{ system.name }}</ion-select-option>
                 </ion-select>
             </ion-item>
+            
         </div>
         <div class="form-input">
             <ion-button @click="save" expand="block" :disabled="formDisabled">Save Game</ion-button>
@@ -44,14 +45,15 @@
 </template>
 
 <script lang="ts">
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonThumbnail, IonIcon, IonSelect, IonSelectOption } from '@ionic/vue';
-import { defineComponent } from 'vue';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonItem, IonLabel, IonInput, IonThumbnail, IonIcon, isPlatform, modalController, IonSelect, IonSelectOption } from '@ionic/vue';
+import { defineComponent, ref } from 'vue';
 import { images } from 'ionicons/icons';
 import CloseModalButton from '@/components/CloseModalButton.vue';
 
-import { Camera, CameraResultType } from '@capacitor/camera';
+import { Camera, CameraResultType, Photo } from '@capacitor/camera';
 import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Storage } from '@capacitor/storage';
+import { Capacitor } from '@capacitor/core';
 
 const convertBlobToBase64 = (blob: Blob) => new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -74,41 +76,87 @@ export default defineComponent({
         IonItem,
         IonThumbnail,
         IonIcon,
+        CloseModalButton,
         IonSelect,
-        IonSelectOption,
-        CloseModalButton
+        IonSelectOption
     },
     methods: {
+        //  Die Erste der 3 Methoden
+        //  Das Bild an Sich wird aufgenommen und das resultierende <Photo> zwischengespeichert
+        //  --------------------
         async importPicture() {
             const photo = await Camera.getPhoto({
                 resultType: CameraResultType.Uri,
-                quality: 60
+                quality: 60,
+                correctOrientation: false
             });
 
             if (photo.webPath) {
                 this.previewImageUrl = photo.webPath;
             }
+
+            this.photo = photo;
         },
 
-        async savePicture(photoWebPath: string, fileName: string) {
-            const response = await fetch(photoWebPath);
-            const blob = await response.blob();
+        //  Die zweite der 3 Methoden
+        //  Das Bild im Filesystem speichern und den Speicherort zurückgeben
+        //  --------------------
+        async savePicture(photo: Photo, fileName: string) {
+            let base64Data: string;
 
-            const base64Data = await convertBlobToBase64(blob) as string;
+            if (isPlatform('hybrid')) {
 
-            await Filesystem.writeFile({
+                if (!photo.path) {
+                    photo.path = '';
+                }
+
+                const file = await Filesystem.readFile({
+                    path: photo.path
+                });
+                base64Data = file.data;
+
+            } else {
+
+                if (!photo.webPath) {
+                    photo.webPath = '';
+                }
+
+                const response = await fetch(photo.webPath);
+                const blob = await response.blob();
+                base64Data = await convertBlobToBase64(blob) as string;
+
+            }
+
+            const savedFile = await Filesystem.writeFile({
                 path: fileName,
                 data: base64Data,
                 directory: Directory.Data
             });
 
-            return {
-                filepath: fileName,
-                webPath: photoWebPath
+            if (isPlatform('hybrid')) {
+
+                return {
+                    filepath: Capacitor.convertFileSrc(savedFile.uri),
+                    webPath: Capacitor.convertFileSrc(savedFile.uri)
+                }
+
+            } else {
+
+                return {
+                    filepath: fileName,
+                    webPath: photo.webPath
+                }
+
             }
         },
 
+        //  Die dritte der 3 Methoden
+        //  Hier wird der Eintrag an sich abgespeichert
+        //  Falls ein Bild vorhanden ist, wird dies über die zweite Mthode im Filesystem gespeichert
         async save() {
+            // deactivate modal
+            this.formDeactivated = true;
+
             // get all entries
             const entries = await Storage.get({ key: 'games' })
 
@@ -120,9 +168,10 @@ export default defineComponent({
 
             // save image and get file name
             let fileName = '';
-            if (this.previewImageUrl != '') {
+            if (this.photo != undefined) {
                 fileName = new Date().getTime() + '.jpeg';
-                await this.savePicture(this.previewImageUrl, fileName);
+                const savedFile = await this.savePicture(this.photo, fileName);
+                fileName = savedFile.filepath;
             }
 
 
@@ -131,8 +180,8 @@ export default defineComponent({
                 id: new Date().getTime(),
                 name: this.form.name,
                 desc: this.form.desc,
-                image: fileName,
                 system: this.form.system,
+                image: fileName,
                 completed: false
             }
 
@@ -150,9 +199,13 @@ export default defineComponent({
                 key: 'games',
                 value: JSON.stringify(saveEntries)
             });
+
+            // daten auf dismiss senden und onDismiss 
+            await modalController.dismiss();
         }
     },
     data() {
+
         return {
             form: {
                 name: '',
@@ -161,17 +214,26 @@ export default defineComponent({
             },
             images,
             previewImageUrl: '/assets/fallback_image.png',
-            systems: [],
+            photo: ref<Photo>(),
+            formDeactivated: false,
+            systems: Array({id: '', name: '', desc: '', image: ''}),
         }
+
     },
     computed: {
+
         formDisabled() {
-            if (this.form.name != '' && this.form.system != '') {
-                return false;
+            if (!this.formDeactivated) {
+                if (this.form.name != '' && this.form.system != '') {
+                    return false;
+                } else {
+                    return true;
+                }
             } else {
                 return true;
             }
         }
+        
     },
     async created() {
         const entries = await Storage.get({ key: 'systems' })

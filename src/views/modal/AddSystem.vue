@@ -186,7 +186,6 @@ export default defineComponent({
                 value: JSON.stringify(saveEntries)
             });
 
-            // this.$emit('updateSystems');
             // daten auf dismiss senden und onDismiss 
             await modalController.dismiss();
         }
