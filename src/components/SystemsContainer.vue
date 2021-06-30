@@ -1,6 +1,6 @@
 <template>
     <ion-list v-if="this.systems != undefined">
-        <ion-item v-for="system in systems" :key="system.id">
+        <ion-item v-for="system in systems" :key="system.id" :router-link="'/system/' + system.id">
             <ion-thumbnail slot="start">
                 <ion-img :src="system.image" />
             </ion-thumbnail>

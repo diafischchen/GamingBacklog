@@ -27,7 +27,10 @@ export default defineComponent({
                 .create({
                     component: AddGame
                 });
-            return modal.present();
+            await modal.present();
+            
+            await modal.onDidDismiss();
+            return await EventBus().emitter.emit("update-games");
         },
         async openAddSystemModal() {
             const modal = await modalController
