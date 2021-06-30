@@ -1,6 +1,6 @@
 <template>
     <details-container :title="system.name">
-        <ion-img :src="system.image"></ion-img>
+        <ion-img class="top-image" :src="system.image"></ion-img>
         <h3>{{ system.name }}</h3>
         <p>{{ system.desc }}</p>
     </details-container>
@@ -71,3 +71,11 @@ export default defineComponent({
     }
 })
 </script>
+
+<style scoped>
+
+.top-image {
+    max-height: 300px;
+}
+
+</style>
