@@ -1,13 +1,13 @@
 <template>
     <details-container :title="system.name">
-        <ion-img class="top-image" :src="system.image"></ion-img>
+        <img class="top-image" :src="system.image" />
         <h3>{{ system.name }}</h3>
         <p>{{ system.desc }}</p>
     </details-container>
 </template>
 
 <script lang="ts">
-import { isPlatform, IonImg } from '@ionic/vue';
+import { isPlatform } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import { useRoute } from 'vue-router';
 import DetailsContainer from '@/views/DetailsContainer.vue';
@@ -18,8 +18,7 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 export default defineComponent({
     name: 'SystemDetails',
     components: {
-        DetailsContainer,
-        IonImg
+        DetailsContainer
     },
     methods: {
         async getData() {
@@ -54,8 +53,6 @@ export default defineComponent({
             }
 
             this.system = system;
-
-            console.log(this.system);
         }
     },
     setup() {
@@ -75,7 +72,9 @@ export default defineComponent({
 <style scoped>
 
 .top-image {
-    max-height: 300px;
+    max-height: 100vw;
+    width: 100%;
+    object-fit: contain;
 }
 
 </style>
