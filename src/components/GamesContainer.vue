@@ -1,6 +1,6 @@
 <template>
     <ion-list v-if="this.filteredGames != null">
-        <ion-item v-for="game in filteredGames" :key="game.id">
+        <ion-item v-for="game in filteredGames" :key="game.id" @click="openGameModal(game)">
             <ion-thumbnail slot="start">
                 <ion-img :src="game.image" />
             </ion-thumbnail>
@@ -14,9 +14,10 @@
 </template>
 
 <script lang="ts">
-import { IonList, IonItem, IonLabel, IonThumbnail, IonImg, isPlatform } from '@ionic/vue';
+import { IonList, IonItem, IonLabel, IonThumbnail, IonImg, isPlatform, modalController } from '@ionic/vue';
 import { defineComponent } from 'vue'
 import ExploreContainer from '@/components/ExploreContainer.vue';
+import GameDetails from '@/views/modal/GameDetails.vue';
 import EventBus from '@/EventBus';
 
 import { Storage } from '@capacitor/storage';
@@ -71,6 +72,17 @@ export default defineComponent({
                 }
 
             }
+        },
+        async openGameModal(game: any) {
+            const modal = await modalController
+                .create({
+                    component: GameDetails,
+                    componentProps: { game: game }
+                });
+            await modal.present();
+            
+            await modal.onDidDismiss();
+            return await EventBus().emitter.emit("update-games");
         }
     },
     data() {

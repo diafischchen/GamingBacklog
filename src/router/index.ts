@@ -32,6 +32,10 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/system/:id',
     component: () => import('@/views/SystemDetails.vue')
+  },
+  {
+    path: '/system/:id/games',
+    component: () => import('@/views/SystemSpecificGames.vue')
   }
 ]
 
