@@ -7,7 +7,7 @@
         </div>
         <div class="bottom-button ion-padding">
             <ion-button expand="block" :disabled="buttonDisabled" color="danger" style="margin-bottom: 10px;" @click="deleteSystem(routeId)">Delete System</ion-button>
-            <ion-button expand="block" :router-link="`/system/${routeId}/games`">Show Games</ion-button>
+            <ion-button expand="block" :disabled="buttonDisabled" :router-link="`/system/${routeId}/games`">Show Games</ion-button>
         </div>
     </details-container>
 </template>
@@ -21,6 +21,7 @@ import EventBus from '@/EventBus';
 
 import { Storage } from '@capacitor/storage';
 import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
 
 export default defineComponent({
     name: 'SystemDetails',
@@ -57,14 +58,14 @@ export default defineComponent({
 
                 if (system.image == '') {
                     system.image = '/assets/fallback_image.png';
+                } else {
+                    system.image = Capacitor.convertFileSrc(system.image);
                 }
 
             }
 
             this.system = system;
         },
-
-        hasHistory () { return window.history.length > 2 },
 
         async deleteSystem(systemId: string) {
 
@@ -107,22 +108,22 @@ export default defineComponent({
 
             // update list
             EventBus().emitter.emit("update-systems");
-
-            // daten auf dismiss senden und onDismiss 
-            if (this.hasHistory()) {
-                this.router.back();
-            } else {
-                this.router.push('/');
-            }
+            this.router.go(-1);
 
         },
-
+            
         async deleteImage(imagePath: string) {
             
-            return await Filesystem.deleteFile({
-                path: imagePath,
-                directory: Directory.Data
-            });
+            if (!isPlatform('hybrid')) {
+                return await Filesystem.deleteFile({
+                    path: imagePath,
+                    directory: Directory.Data
+                });
+            } else {
+                return await Filesystem.deleteFile({
+                    path: imagePath
+                });  
+            }
 
         },
 
@@ -161,9 +162,13 @@ export default defineComponent({
         return {
             router,
             routeId,
-            system: [],
+        }
+    },
+    data() {
+        return {
             deleteAgree: false,
-            buttonDisabled: false
+            buttonDisabled: false,
+            system: []
         }
     },
     created() {

@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts">
-import { IonHeader, IonToolbar, IonTitle, IonContent, modalController, alertController } from '@ionic/vue';
+import { IonHeader, IonToolbar, IonTitle, IonContent, modalController, alertController, isPlatform } from '@ionic/vue';
 import { defineComponent } from 'vue';
 import CloseModalButton from '@/components/CloseModalButton.vue';
 
@@ -118,10 +118,16 @@ export default defineComponent({
 
         async deleteImage(imagePath: string) {
             
-            return await Filesystem.deleteFile({
-                path: imagePath,
-                directory: Directory.Data
-            });
+            if (!isPlatform('hybrid')) {
+                return await Filesystem.deleteFile({
+                    path: imagePath,
+                    directory: Directory.Data
+                });
+            } else {
+                return await Filesystem.deleteFile({
+                    path: imagePath
+                });  
+            }
 
         },
 

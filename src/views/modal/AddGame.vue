@@ -136,7 +136,7 @@ export default defineComponent({
             if (isPlatform('hybrid')) {
 
                 return {
-                    filepath: Capacitor.convertFileSrc(savedFile.uri),
+                    filepath: savedFile.uri,
                     webPath: Capacitor.convertFileSrc(savedFile.uri)
                 }
 

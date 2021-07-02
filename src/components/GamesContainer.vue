@@ -22,6 +22,7 @@ import EventBus from '@/EventBus';
 
 import { Storage } from '@capacitor/storage';
 import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
 
 
 export default defineComponent({
@@ -68,6 +69,8 @@ export default defineComponent({
                 for (const game of this.games) {
                     if (game.image == '') {
                         game.image = '/assets/fallback_image.png';
+                    } else {
+                        game.image = Capacitor.convertFileSrc(game.image);
                     }
                 }
 

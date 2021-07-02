@@ -1,5 +1,5 @@
 <template>
-    <ion-list v-if="this.systems != undefined">
+    <ion-list v-if="this.systems != undefined && this.systems.length != 0">
         <ion-item v-for="system in systems" :key="system.id" :router-link="'/system/' + system.id">
             <ion-thumbnail slot="start">
                 <ion-img :src="system.image" />
@@ -21,6 +21,7 @@ import EventBus from '@/EventBus';
 
 import { Storage } from '@capacitor/storage';
 import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
 
 
 export default defineComponent({
@@ -62,6 +63,8 @@ export default defineComponent({
                 for (const system of this.systems) {
                     if (system.image == '') {
                         system.image = '/assets/fallback_image.png';
+                    } else {
+                        system.image = Capacitor.convertFileSrc(system.image);
                     }
                 }
 
